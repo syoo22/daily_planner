@@ -78,7 +78,7 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 .habit-check:checked{background:#78947d;border-color:#78947d}.habit-check:checked:after{content:"✓";position:absolute;color:white;font-size:13px;left:3px;top:0}
 .habit-name{flex:1;font-size:14px;color:#44443e}.habit-row.done .habit-name{color:#a3a69e;text-decoration:line-through}
 .habit-empty{font-size:12px;color:#aaa99f;padding:5px 0 10px;line-height:1.6}
-.report-actions{display:flex;justify-content:flex-end;margin:0 0 12px}
+.nutrition-bar{height:8px;background:#f0f1ec;border-radius:99px;overflow:hidden;margin:7px 0 13px}.nutrition-bar i{display:block;height:100%;border-radius:99px}.nutrition-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#66665e}.nutrition-row strong{color:#3e4d40;font-variant-numeric:tabular-nums}.nutrition-meal{padding:12px 0;border-top:1px solid #f1f1ec}.nutrition-meal:first-child{border-top:0}.nutrition-meal-title{font-size:13px;font-weight:650;line-height:1.5}.nutrition-meal-meta{font-size:11px;color:#92928a;margin-top:4px;line-height:1.6}.nutrition-note{font-size:10px;color:#a0a098;line-height:1.6;margin-top:12px;padding-top:10px;border-top:1px solid #f1f1ec}.nutrition-feedback{background:#f5f7f2;border-radius:13px;padding:14px;font-size:13px;line-height:1.8;color:#62685f}.nutrition-empty{padding:12px 0;color:#a0a098;font-size:12px;line-height:1.7}@media(max-width:390px){.tab{font-size:12px;padding:11px 3px}.tabs{gap:1px}}.report-actions{display:flex;justify-content:flex-end;margin:0 0 12px}
 .export-btn{border:1px solid #e5e9e2;background:#f5f7f3;color:#5e765f;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:650}
 @media(min-width:600px){body{padding:20px 0}.app{border-radius:28px;min-height:calc(100dvh - 40px);box-shadow:0 10px 45px #0000000a}}
 </style>
@@ -87,7 +87,7 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 <div class="app">
   <div class="top"><div class="brand">MY DAILY NOTE</div><button class="today-link" id="goToday">오늘로 이동</button></div>
   <h1 id="pageTitle">오늘의 기록</h1><p class="sub">먹은 것과 해야 할 일을 생각날 때마다 편하게 기록해요.</p>
-  <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button><button class="tab" data-tab="report">리포트</button></div>
+  <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button><button class="tab" data-tab="report">리포트</button><button class="tab" data-tab="nutrition">AI 식단</button></div>
   <div id="dailyView">
     <div class="datebar"><div class="date-title" id="dailyDate"></div><div class="date-actions"><button class="iconbtn" id="prevDay">‹</button><button class="iconbtn" id="nextDay">›</button></div></div>
     <section class="section"><div class="section-head"><div class="section-title">하루 타임라인 <span class="count" id="timelineCount"></span></div><div style="display:flex;gap:6px"><button class="add-small" data-add="food">＋ 식단</button><button class="add-small" data-add="task">＋ 할 일</button></div></div><div id="timelineList"></div></section>
@@ -97,6 +97,15 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
     <div class="datebar"><div class="date-title" id="monthTitle"></div><div class="date-actions"><button class="iconbtn" id="prevMonth">‹</button><button class="iconbtn" id="nextMonth">›</button></div></div>
     <div class="calendar"><div class="weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="days" id="days"></div><div class="calendar-legend"><span><i class="legend-dot" style="background:var(--food)"></i>식단 기록</span><span><i class="legend-dot" style="background:var(--task)"></i>할 일</span></div></div>
     <div class="day-summary"><h3 class="summary-date" id="summaryDate"></h3><section class="section"><div class="summary-section"><div class="summary-label">식단</div><div id="summaryFood"></div></div><div class="summary-section"><div class="summary-label">할 일</div><div id="summaryTasks"></div></div><div style="display:flex;gap:8px;margin-top:15px"><button class="add-small" data-add="food">＋ 식단 기록</button><button class="add-small" data-add="task">＋ 할 일 추가</button></div></section></div>
+  </div>
+  <div id="nutritionView" class="hidden">
+    <div class="datebar"><div class="date-title">AI 식단 분석</div><div class="date-actions"><button class="iconbtn" id="nutritionPrev">‹</button><button class="iconbtn" id="nutritionNext">›</button></div></div>
+    <div class="report-switch"><button class="report-period active" data-nutrition-period="day">하루</button><button class="report-period" data-nutrition-period="week">최근 7일</button></div>
+    <div class="report-range" id="nutritionRange"></div>
+    <div class="report-grid"><div class="report-card"><div class="report-label">예상 섭취 열량</div><div class="report-value" id="nutritionCalories">-</div><div class="report-note" id="nutritionMealCount">식단 기록 기준</div></div><div class="report-card"><div class="report-label">분석한 식사</div><div class="report-value" id="nutritionCount">0회</div><div class="report-note" id="nutritionKnown">영양 정보 확인 가능 0회</div></div></div>
+    <section class="section report-section"><div class="section-head"><div class="section-title">예상 영양소 섭취량</div></div><div id="nutritionMacros"></div><div class="nutrition-note">음식명으로 추정한 참고값이에요. 실제 섭취량, 조리법, 양에 따라 차이가 날 수 있어요.</div></section>
+    <section class="section report-section"><div class="section-head"><div class="section-title">식사별 분석</div></div><div id="nutritionMeals"></div></section>
+    <section class="section report-section"><div class="section-head"><div class="section-title">✦ AI 식단 피드백</div></div><div id="nutritionFeedback" class="report-insight"></div></section>
   </div>
   <div id="reportView" class="hidden">
     <div class="datebar"><div class="date-title">나의 기록 리포트</div></div>
@@ -180,7 +189,7 @@ function renderSummary(){
  $('#summaryTasks').innerHTML=r.task.length?r.task.map(x=>`<div class="entry ${x.done?'done':''}"><input class="check" type="checkbox" data-task="${x.id}" ${x.done?'checked':''}><span class="time">${x.time||'--:--'}</span><span class="entry-text">${escapeHtml(x.text)}</span></div>`).join(''):'<div class="empty">등록된 할 일이 없어요.</div>';
  $('#summaryTasks').querySelectorAll('[data-task]').forEach(cb=>cb.onchange=()=>{let x=records[selected].task.find(v=>v.id===cb.dataset.task);x.done=cb.checked;persist()});
 }
-function switchTab(tab){activeTab=tab;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('#dailyView').classList.toggle('hidden',tab!=='daily');$('#calendarView').classList.toggle('hidden',tab!=='calendar');$('#reportView').classList.toggle('hidden',tab!=='report');$('#pageTitle').textContent=tab==='daily'?'오늘의 기록':tab==='calendar'?'월간 캘린더':'나의 리포트';$('#quickAdd').classList.toggle('hidden',tab==='report');$('#quickAdd').textContent=tab==='daily'?'＋ 기록 추가하기':'＋ 선택한 날짜에 기록하기';if(tab==='report')renderReport()}
+function switchTab(tab){activeTab=tab;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('#dailyView').classList.toggle('hidden',tab!=='daily');$('#calendarView').classList.toggle('hidden',tab!=='calendar');$('#reportView').classList.toggle('hidden',tab!=='report');$('#nutritionView').classList.toggle('hidden',tab!=='nutrition');$('#pageTitle').textContent=tab==='daily'?'오늘의 기록':tab==='calendar'?'월간 캘린더':tab==='report'?'나의 리포트':'AI 식단 분석';$('#quickAdd').classList.toggle('hidden',tab==='report'||tab==='nutrition');$('#quickAdd').textContent=tab==='daily'?'＋ 기록 추가하기':'＋ 선택한 날짜에 기록하기';if(tab==='report')renderReport();if(tab==='nutrition')renderNutrition()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('#prevDay').onclick=()=>{let d=parse(selected);d.setDate(d.getDate()-1);selected=iso(d);viewMonth=new Date(d.getFullYear(),d.getMonth(),1);render()};
 $('#nextDay').onclick=()=>{let d=parse(selected);d.setDate(d.getDate()+1);selected=iso(d);viewMonth=new Date(d.getFullYear(),d.getMonth(),1);render()};
@@ -188,6 +197,51 @@ $('#prevMonth').onclick=()=>{viewMonth.setMonth(viewMonth.getMonth()-1);renderCa
 $('#nextMonth').onclick=()=>{viewMonth.setMonth(viewMonth.getMonth()+1);renderCalendar()};
 let reportPeriod='week';
 document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{reportPeriod=b.dataset.period;document.querySelectorAll('[data-period]').forEach(x=>x.classList.toggle('active',x===b));renderReport()});
+const foodNutrition=[
+ {keys:['닭가슴살','치킨브레스트'],name:'닭가슴살',kcal:165,carb:0,protein:31,fat:3.6},
+ {keys:['삶은 계란','삶은달걀','계란','달걀'],name:'달걀',kcal:78,carb:0.6,protein:6.3,fat:5.3},
+ {keys:['그릭요거트','그릭 요거트'],name:'그릭요거트',kcal:130,carb:8,protein:12,fat:5},
+ {keys:['요거트','요구르트'],name:'요거트',kcal:110,carb:17,protein:5,fat:2.5},
+ {keys:['현미밥'],name:'현미밥',kcal:215,carb:45,protein:5,fat:1.8},
+ {keys:['볶음밥'],name:'볶음밥',kcal:520,carb:75,protein:13,fat:18},
+ {keys:['김치찌개','김치 찌개'],name:'김치찌개',kcal:250,carb:12,protein:18,fat:13},
+ {keys:['된장찌개','된장 찌개'],name:'된장찌개',kcal:200,carb:15,protein:15,fat:9},
+ {keys:['순두부찌개','순두부 찌개'],name:'순두부찌개',kcal:250,carb:12,protein:20,fat:13},
+ {keys:['비빔밥'],name:'비빔밥',kcal:550,carb:85,protein:18,fat:15},
+ {keys:['가지덮밥','덮밥'],name:'덮밥류',kcal:550,carb:78,protein:18,fat:17},
+ {keys:['김밥'],name:'김밥',kcal:430,carb:65,protein:12,fat:13},
+ {keys:['샐러드'],name:'샐러드',kcal:180,carb:14,protein:8,fat:10},
+ {keys:['고구마'],name:'고구마',kcal:130,carb:30,protein:2,fat:0.2},
+ {keys:['바나나'],name:'바나나',kcal:105,carb:27,protein:1.3,fat:0.4},
+ {keys:['사과'],name:'사과',kcal:95,carb:25,protein:0.5,fat:0.3},
+ {keys:['브로콜리'],name:'브로콜리',kcal:55,carb:11,protein:4,fat:0.6},
+ {keys:['두부'],name:'두부',kcal:150,carb:4,protein:16,fat:9},
+ {keys:['연어'],name:'연어',kcal:280,carb:0,protein:25,fat:18},
+ {keys:['소고기','불고기'],name:'소고기 요리',kcal:300,carb:12,protein:25,fat:17},
+ {keys:['파스타','스파게티'],name:'파스타',kcal:550,carb:75,protein:18,fat:20},
+ {keys:['피자'],name:'피자',kcal:285,carb:36,protein:12,fat:10},
+ {keys:['햄버거','버거'],name:'햄버거',kcal:520,carb:45,protein:25,fat:27},
+ {keys:['라면'],name:'라면',kcal:500,carb:65,protein:10,fat:16}
+];
+function estimateFood(text){const s=String(text||'').toLowerCase();const f=foodNutrition.find(v=>v.keys.some(k=>s.includes(k)));if(!f)return null;let m=1;if(/반개|반공기|반그릇|반인분/.test(s))m=.5;else if(/2인분|두 개|2개|두 공기/.test(s))m=2;return {...f,kcal:Math.round(f.kcal*m),carb:+(f.carb*m).toFixed(1),protein:+(f.protein*m).toFixed(1),fat:+(f.fat*m).toFixed(1)}}
+let nutritionPeriod='day',nutritionDate=selected;
+function renderNutrition(){
+ const end=parse(nutritionDate),start=new Date(end);if(nutritionPeriod==='week')start.setDate(start.getDate()-6);
+ const keys=[];for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1))keys.push(iso(d));
+ const meals=keys.flatMap(k=>(records[k]?.food||[]).map(x=>({...x,date:k,estimate:estimateFood(x.text)})));
+ const known=meals.filter(x=>x.estimate),tot=known.reduce((a,x)=>({kcal:a.kcal+x.estimate.kcal,carb:a.carb+x.estimate.carb,protein:a.protein+x.estimate.protein,fat:a.fat+x.estimate.fat}),{kcal:0,carb:0,protein:0,fat:0});
+ const n=nutritionPeriod==='week'?7:1,avg={kcal:Math.round(tot.kcal/n),carb:Math.round(tot.carb/n),protein:Math.round(tot.protein/n),fat:Math.round(tot.fat/n)};
+ $('#nutritionRange').textContent=nutritionPeriod==='day'?dateLabel(nutritionDate)+' 식단 기록':(start.getMonth()+1)+'/'+start.getDate()+' - '+(end.getMonth()+1)+'/'+end.getDate();
+ $('#nutritionCalories').textContent=known.length?avg.kcal.toLocaleString()+' kcal':'-';$('#nutritionMealCount').textContent=nutritionPeriod==='week'?'하루 평균 추정 섭취량':'확인 가능한 음식 기준 추정치';$('#nutritionCount').textContent=meals.length+'회';$('#nutritionKnown').textContent='영양 정보 확인 '+known.length+'회 / 미확인 '+(meals.length-known.length)+'회';
+ const macros=[{name:'탄수화물',v:avg.carb,color:'#D7AE7E',max:250},{name:'단백질',v:avg.protein,color:'#819B83',max:100},{name:'지방',v:avg.fat,color:'#D69A91',max:80}];
+ $('#nutritionMacros').innerHTML=known.length?macros.map(m=>'<div class="nutrition-row"><span>'+m.name+'</span><strong>'+m.v+' g</strong></div><div class="nutrition-bar"><i style="width:'+Math.min(100,m.v/m.max*100)+'%;background:'+m.color+'"></i></div>').join(''):'<div class="nutrition-empty">분석할 식단 기록이 없거나 음식명을 영양정보와 연결하지 못했어요. 음식명을 구체적으로 입력하면 분석할 수 있어요.</div>';
+ $('#nutritionMeals').innerHTML=meals.length?meals.map(x=>'<div class="nutrition-meal"><div class="nutrition-meal-title">'+(nutritionPeriod==='week'?dateLabel(x.date)+' / ':'')+escapeHtml(x.time||'시간 미정')+'  '+escapeHtml(x.text)+'</div><div class="nutrition-meal-meta">'+(x.estimate?x.estimate.kcal+' kcal / 탄수화물 '+x.estimate.carb+'g / 단백질 '+x.estimate.protein+'g / 지방 '+x.estimate.fat+'g':'영양정보 미확인: 음식명 또는 메뉴를 더 구체적으로 입력해 주세요.')+'</div></div>').join(''):'<div class="nutrition-empty">아직 식단 기록이 없어요. 오늘 기록 탭에서 먹은 음식을 추가해 주세요.</div>';
+ let feedback=[];if(!meals.length)feedback.push('식단을 기록하면 섭취 열량과 영양소를 분석해 드릴게요.');else if(!known.length)feedback.push('현재 기록한 음식은 영양정보와 연결되지 않았어요. 예를 들어 "닭가슴살 100g", "현미밥 1공기"처럼 구체적으로 적어보세요.');else{if(avg.protein<20)feedback.push('단백질 섭취량이 적게 추정돼요. 달걀, 두부, 생선, 닭고기 같은 단백질 식품을 곁들여 보세요.');else feedback.push('단백질 식품이 포함된 기록이 있어요. 매 끼니에 단백질 식품을 꾸준히 포함해 보세요.');if(avg.carb>avg.kcal/8)feedback.push('탄수화물 섭취 비중이 높은 편으로 추정돼요. 밥이나 면의 양과 채소, 단백질 반찬의 균형을 살펴보세요.');if(avg.fat>avg.kcal/27)feedback.push('지방 섭취가 높게 추정돼요. 조리 시 기름과 소스 양도 함께 확인해 보세요.');if(known.length<meals.length)feedback.push('일부 음식은 영양정보를 찾지 못해 합계에서 제외했어요. 음식명을 더 구체적으로 입력하면 분석 범위가 넓어져요.')}
+ $('#nutritionFeedback').innerHTML='<div class="nutrition-feedback">'+feedback.map(t=>'<p style="margin:0 0 7px">'+escapeHtml(t)+'</p>').join('')+'<p style="margin:8px 0 0;color:#999;font-size:10px">음식명 기반 자동 추정 피드백이며 의료적 진단이나 실제 AI 모델의 분석은 아니에요.</p></div>';
+}
+document.querySelectorAll('[data-nutrition-period]').forEach(b=>b.onclick=()=>{nutritionPeriod=b.dataset.nutritionPeriod;document.querySelectorAll('[data-nutrition-period]').forEach(x=>x.classList.toggle('active',x===b));renderNutrition()});
+$('#nutritionPrev').onclick=()=>{const d=parse(nutritionDate);d.setDate(d.getDate()-(nutritionPeriod==='week'?7:1));nutritionDate=iso(d);renderNutrition()};
+$('#nutritionNext').onclick=()=>{const d=parse(nutritionDate);d.setDate(d.getDate()+(nutritionPeriod==='week'?7:1));nutritionDate=iso(d);renderNutrition()};
 function renderReport(){
  if(!$('#reportView'))return;const end=parse(iso(now)),start=new Date(end);if(reportPeriod==='week')start.setDate(end.getDate()-6);else start.setDate(1);
  const keys=[];for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1))keys.push(iso(d));
