@@ -103,7 +103,8 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 </style>
 </head>
 <body>
-<div class="app">\n  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="app">
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="top"><div class="brand">MY DAILY NOTE</div></div>
   <h1 id="pageTitle">오늘의 기록</h1><p class="sub">먹은 것과 해야 할 일을 생각날 때마다 편하게 기록해요.</p>
   <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button><button class="tab" data-tab="report">리포트</button><button class="tab" data-tab="nutrition">AI 식단</button></div>
@@ -159,7 +160,8 @@ const weekdays=['일','월','화','수','목','금','토'];
 const dateLabel=s=>{let d=parse(s);return `${d.getMonth()+1}/${d.getDate()} ${weekdays[d.getDay()]}`};
 const items=()=>records[selected]||{food:[],task:[],habits:[]};
 let habits=[];try{habits=JSON.parse(localStorage.getItem('daily-note-habits')||'[]')}catch(e){habits=[]}
-function persist(){localStorage.setItem('daily-note-records',JSON.stringify(records));render()}\nlet toastTimer;function showToast(message){const el=$('#toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
+function persist(){localStorage.setItem('daily-note-records',JSON.stringify(records));render()}
+let toastTimer;function showToast(message){const el=$('#toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
 function render(){
  $('#dailyDate').textContent=dateLabel(selected);renderTimeline();renderHabits();renderPlant();renderCalendar();renderSummary();renderReport();
 }
@@ -172,7 +174,8 @@ function renderHabits(){
  $('#habitList').querySelectorAll('.habit-row').forEach(row=>{const id=row.dataset.habitRow,menu=row.querySelector('.habit-menu'),more=row.querySelector('.more');more.onclick=()=>{document.querySelectorAll('.habit-menu.open,.entry-menu.open').forEach(m=>{if(m!==menu)m.classList.remove('open')});menu.classList.toggle('open')};row.querySelector('.edit-habit').onclick=()=>{const h=habits.find(x=>x.id===id);if(!h)return;const name=prompt('습관 이름을 수정해 주세요.',h.name);if(name===null||!name.trim())return;h.name=name.trim().slice(0,40);localStorage.setItem('daily-note-habits',JSON.stringify(habits));renderHabits()};row.querySelector('.delete-habit').onclick=()=>{const h=habits.find(x=>x.id===id);if(h&&confirm('"'+h.name+'" 습관을 목록에서 삭제할까요?')){habits=habits.filter(x=>x.id!==h.id);localStorage.setItem('daily-note-habits',JSON.stringify(habits));persist()}}});
 }
 $('#addHabit').onclick=()=>{const name=prompt('매일 기록할 습관을 입력해 주세요.');if(!name||!name.trim())return;habits.push({id:'h'+Date.now().toString(36),name:name.trim().slice(0,40)});localStorage.setItem('daily-note-habits',JSON.stringify(habits));renderHabits()};
-function renderPlant(){const total=Object.values(records).reduce((n,r)=>n+(r.task||[]).filter(x=>x.done).length+(r.habits||[]).length,0);const stages=[{n:'🌱',t:'씨앗을 심었어요',p:'작은 실천이 성장의 시작이에요.'},{n:'🌿',t:'새싹이 돋아났어요',p:'꾸준한 기록으로 새싹이 자라고 있어요.'},{n:'🪴',t:'잎이 풍성해지고 있어요',p:'좋은 습관이 차곡차곡 쌓이고 있어요.'},{n:'🌳',t:'튼튼하게 자랐어요',p:'매일의 실천이 멋진 성장이 되었어요.'}];const idx=Math.min(3,Math.floor(total/5)),progress=total>=15?100:(total%5)*20;$('#plantSprout').textContent=stages[idx].n;$('#plantStage').textContent=stages[idx].t;$('#plantProgress').style.width=progress+'%';$('#plantNote').textContent=total+'회 실천했어요. '+stages[idx].p}\nfunction renderTimeline(){
+function renderPlant(){const total=Object.values(records).reduce((n,r)=>n+(r.task||[]).filter(x=>x.done).length+(r.habits||[]).length,0);const stages=[{n:'🌱',t:'씨앗을 심었어요',p:'작은 실천이 성장의 시작이에요.'},{n:'🌿',t:'새싹이 돋아났어요',p:'꾸준한 기록으로 새싹이 자라고 있어요.'},{n:'🪴',t:'잎이 풍성해지고 있어요',p:'좋은 습관이 차곡차곡 쌓이고 있어요.'},{n:'🌳',t:'튼튼하게 자랐어요',p:'매일의 실천이 멋진 성장이 되었어요.'}];const idx=Math.min(3,Math.floor(total/5)),progress=total>=15?100:(total%5)*20;$('#plantSprout').textContent=stages[idx].n;$('#plantStage').textContent=stages[idx].t;$('#plantProgress').style.width=progress+'%';$('#plantNote').textContent=total+'회 실천했어요. '+stages[idx].p}
+function renderTimeline(){
  const all=[...(items().food||[]).map(x=>({...x,type:'food'})),...(items().task||[]).map(x=>({...x,type:'task'}))].sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
  $('#timelineCount').textContent=all.length?all.length+'개 기록':'';
  if(!all.length){$('#timelineList').innerHTML='<div class="empty">아직 기록이 없어요. 식단이나 할 일을 추가해보세요.</div>';return}
@@ -305,7 +308,8 @@ function exportCsv(){
   (r.habits||[]).forEach(id=>{const h=habits.find(v=>v.id===id);if(h)rows.push([date,'습관','',h.name,'완료'])});
  });
  habits.forEach(h=>rows.push(['','습관 목록','',h.name,'']));
- const csv='\\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
+ const csv='\\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\
+');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='my-daily-note-'+iso(new Date())+'.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
