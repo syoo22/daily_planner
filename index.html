@@ -77,9 +77,9 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 </div></div>
 <script>
 const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0'), iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const now=new Date(); let selected=iso(now), viewMonth=new Date(now.getFullYear(),now.getMonth(),1), kind='food', editing=null, activeTab='daily';
 let records={}; try{records=JSON.parse(localStorage.getItem('daily-note-records')||'{}')}catch(e){records={}}
-const pad=n=>String(n).padStart(2,'0'), iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const parse=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const weekdays=['일','월','화','수','목','금','토'];
 const dateLabel=s=>{let d=parse(s);return `${d.getMonth()+1}/${d.getDate()} ${weekdays[d.getDay()]}`};
