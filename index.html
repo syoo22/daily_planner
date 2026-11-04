@@ -72,6 +72,13 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 .section-title{letter-spacing:-.35px}
 @media(hover:hover){.report-card:hover{transform:translateY(-2px);box-shadow:0 9px 25px rgba(48,48,35,.065)}}
 .timeline-entry{display:flex;gap:10px;position:relative;padding:12px 0;border-top:1px solid #f2f2ee}.timeline-entry:first-child{border-top:0}.timeline-axis{width:49px;flex:none;font-size:12px;color:#999990;padding-top:2px;font-variant-numeric:tabular-nums}.timeline-mark{position:absolute;left:54px;top:18px;width:7px;height:7px;border-radius:50%;z-index:1}.timeline-content{margin-left:8px;flex:1;min-width:0;display:flex;align-items:flex-start;gap:8px}.timeline-kind{font-size:10px;color:#a0a098;background:#f5f5f1;border-radius:5px;padding:3px 6px;flex:none}.timeline-entry.food .timeline-mark{background:var(--food)}.timeline-entry.task .timeline-mark{background:var(--task)}.timeline-entry.done .entry-text{color:#aaa;text-decoration:line-through}
+.habit-row{display:flex;align-items:center;gap:11px;padding:12px 1px;border-top:1px solid #f2f2ee}
+.habit-row:first-child{border-top:0}.habit-check{appearance:none;width:20px;height:20px;border:1.5px solid #c9c9c1;border-radius:7px;margin:0;flex:none;position:relative}
+.habit-check:checked{background:#78947d;border-color:#78947d}.habit-check:checked:after{content:"✓";position:absolute;color:white;font-size:13px;left:3px;top:0}
+.habit-name{flex:1;font-size:14px;color:#44443e}.habit-row.done .habit-name{color:#a3a69e;text-decoration:line-through}
+.habit-empty{font-size:12px;color:#aaa99f;padding:5px 0 10px;line-height:1.6}
+.report-actions{display:flex;justify-content:flex-end;margin:0 0 12px}
+.export-btn{border:1px solid #e5e9e2;background:#f5f7f3;color:#5e765f;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:650}
 @media(min-width:600px){body{padding:20px 0}.app{border-radius:28px;min-height:calc(100dvh - 40px);box-shadow:0 10px 45px #0000000a}}
 </style>
 </head>
@@ -83,6 +90,7 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
   <div id="dailyView">
     <div class="datebar"><div class="date-title" id="dailyDate"></div><div class="date-actions"><button class="iconbtn" id="prevDay">‹</button><button class="iconbtn" id="nextDay">›</button></div></div>
     <section class="section"><div class="section-head"><div class="section-title">하루 타임라인 <span class="count" id="timelineCount"></span></div><div style="display:flex;gap:6px"><button class="add-small" data-add="food">＋ 식단</button><button class="add-small" data-add="task">＋ 할 일</button></div></div><div id="timelineList"></div></section>
+    <section class="section"><div class="section-head"><div class="section-title">매일의 습관 <span class="count" id="habitProgress">0/0 완료</span></div><button class="add-small" id="addHabit">＋ 습관 추가</button></div><div id="habitList"></div></section>
   </div>
   <div id="calendarView" class="hidden">
     <div class="datebar"><div class="date-title" id="monthTitle"></div><div class="date-actions"><button class="iconbtn" id="prevMonth">‹</button><button class="iconbtn" id="nextMonth">›</button></div></div>
@@ -101,6 +109,7 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
     </div>
     <section class="section report-section"><div class="section-head"><div class="section-title" id="chartTitle">요일별 할 일 완료율</div></div><div id="reportChart" class="report-chart"></div></section>
     <section class="section report-section"><div class="section-head"><div class="section-title">기간 요약</div></div><div id="reportInsight" class="report-insight"></div></section>
+    <div class="report-actions"><button class="export-btn" id="exportCsv">↓ 기록 CSV 내보내기</button></div>
   </div>
 </div>
 <button class="fab" id="quickAdd">＋ 기록 추가하기</button>
