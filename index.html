@@ -48,6 +48,10 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 .field{margin:12px 0;min-width:0}.field label{display:block;font-size:12px;color:#85857d;margin-bottom:7px}.field input{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;border:1px solid #e9e9e3;border-radius:12px;padding:13px 12px;outline:none;background:#fff;font-size:16px}.field input:focus{border-color:#9aab9c}.field input[type="time"]{-webkit-appearance:none;appearance:none;text-align:center;padding-left:8px;padding-right:8px}.field input[type="time"]::-webkit-date-and-time-value{text-align:center}.field input[type="time"]::-webkit-calendar-picker-indicator{margin:0}
 .save{width:100%;border:0;border-radius:13px;background:#29372d;color:white;padding:14px;font-weight:700;margin-top:8px}
 .hidden{display:none!important}
+.report-switch{display:flex;background:#ecece8;padding:4px;border-radius:13px;margin-bottom:12px}.report-period{flex:1;border:0;background:transparent;border-radius:10px;padding:10px;color:#888;font-size:13px}.report-period.active{background:#fff;color:#292925;font-weight:700;box-shadow:0 2px 8px #0000000a}
+.report-range{font-size:12px;color:var(--muted);margin:0 2px 13px}.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.report-card{background:#fff;border-radius:17px;padding:15px;box-shadow:0 3px 16px #22220806;min-width:0}.report-label{font-size:11px;color:#92928a}.report-value{font-size:25px;font-weight:780;letter-spacing:-.8px;margin:7px 0 3px}.report-note{font-size:10px;color:#a0a098}.progress{height:5px;background:#efefeb;border-radius:9px;margin-top:11px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--task);border-radius:9px;transition:width .35s}
+.report-section{margin-top:12px}.report-chart{display:flex;align-items:flex-end;justify-content:space-around;gap:8px;height:142px;padding:10px 2px 0}.chart-col{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.chart-track{height:105px;width:min(25px,75%);background:#f1f2ee;border-radius:8px 8px 4px 4px;display:flex;align-items:flex-end;overflow:hidden}.chart-bar{width:100%;height:0;background:#829786;border-radius:8px 8px 3px 3px;transition:height .35s}.chart-num{font-size:9px;color:#8e8e86}.chart-label{font-size:10px;color:#92928a}.report-insight{font-size:13px;line-height:1.8;color:#66665e}
+.timeline-entry{display:flex;gap:10px;position:relative;padding:12px 0;border-top:1px solid #f2f2ee}.timeline-entry:first-child{border-top:0}.timeline-axis{width:49px;flex:none;font-size:12px;color:#999990;padding-top:2px;font-variant-numeric:tabular-nums}.timeline-mark{position:absolute;left:54px;top:18px;width:7px;height:7px;border-radius:50%;z-index:1}.timeline-content{margin-left:8px;flex:1;min-width:0;display:flex;align-items:flex-start;gap:8px}.timeline-kind{font-size:10px;color:#a0a098;background:#f5f5f1;border-radius:5px;padding:3px 6px;flex:none}.timeline-entry.food .timeline-mark{background:var(--food)}.timeline-entry.task .timeline-mark{background:var(--task)}.timeline-entry.done .entry-text{color:#aaa;text-decoration:line-through}
 @media(min-width:600px){body{padding:20px 0}.app{border-radius:28px;min-height:calc(100dvh - 40px);box-shadow:0 10px 45px #0000000a}}
 </style>
 </head>
@@ -55,16 +59,28 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 <div class="app">
   <div class="top"><div class="brand">MY DAILY NOTE</div><button class="today-link" id="goToday">오늘로 이동</button></div>
   <h1 id="pageTitle">오늘의 기록</h1><p class="sub">먹은 것과 해야 할 일을 생각날 때마다 편하게 기록해요.</p>
-  <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button></div>
+  <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button><button class="tab" data-tab="report">리포트</button></div>
   <div id="dailyView">
     <div class="datebar"><div class="date-title" id="dailyDate"></div><div class="date-actions"><button class="iconbtn" id="prevDay">‹</button><button class="iconbtn" id="nextDay">›</button></div></div>
-    <section class="section"><div class="section-head"><div class="section-title"><i class="dot food-dot"></i>오늘의 식단 <span class="count" id="foodCount"></span></div><button class="add-small" data-add="food">＋ 기록</button></div><div id="foodList"></div></section>
-    <section class="section"><div class="section-head"><div class="section-title"><i class="dot task-dot"></i>오늘의 할 일 <span class="count" id="taskCount"></span></div><button class="add-small" data-add="task">＋ 추가</button></div><div id="taskList"></div></section>
+    <section class="section"><div class="section-head"><div class="section-title">하루 타임라인 <span class="count" id="timelineCount"></span></div><div style="display:flex;gap:6px"><button class="add-small" data-add="food">＋ 식단</button><button class="add-small" data-add="task">＋ 할 일</button></div></div><div id="timelineList"></div></section>
   </div>
   <div id="calendarView" class="hidden">
     <div class="datebar"><div class="date-title" id="monthTitle"></div><div class="date-actions"><button class="iconbtn" id="prevMonth">‹</button><button class="iconbtn" id="nextMonth">›</button></div></div>
     <div class="calendar"><div class="weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="days" id="days"></div><div class="calendar-legend"><span><i class="legend-dot" style="background:var(--food)"></i>식단 기록</span><span><i class="legend-dot" style="background:var(--task)"></i>할 일</span></div></div>
     <div class="day-summary"><h3 class="summary-date" id="summaryDate"></h3><section class="section"><div class="summary-section"><div class="summary-label">식단</div><div id="summaryFood"></div></div><div class="summary-section"><div class="summary-label">할 일</div><div id="summaryTasks"></div></div><div style="display:flex;gap:8px;margin-top:15px"><button class="add-small" data-add="food">＋ 식단 기록</button><button class="add-small" data-add="task">＋ 할 일 추가</button></div></section></div>
+  </div>
+  <div id="reportView" class="hidden">
+    <div class="datebar"><div class="date-title">나의 기록 리포트</div></div>
+    <div class="report-switch"><button class="report-period active" data-period="week">주간</button><button class="report-period" data-period="month">월간</button></div>
+    <div class="report-range" id="reportRange"></div>
+    <div class="report-grid">
+      <div class="report-card"><div class="report-label">할 일 완료율</div><div class="report-value" id="completionRate">0%</div><div class="report-note" id="taskSummary">완료 0 / 전체 0개</div><div class="progress"><i id="completionBar"></i></div></div>
+      <div class="report-card"><div class="report-label">식단 기록</div><div class="report-value" id="foodTotal">0회</div><div class="report-note" id="foodDays">기록한 날 0일</div></div>
+      <div class="report-card"><div class="report-label">할 일 완료</div><div class="report-value" id="doneTotal">0개</div><div class="report-note">선택한 기간 기준</div></div>
+      <div class="report-card"><div class="report-label">기록한 날짜</div><div class="report-value" id="activeDays">0일</div><div class="report-note">식단 또는 할 일 기록</div></div>
+    </div>
+    <section class="section report-section"><div class="section-head"><div class="section-title" id="chartTitle">요일별 할 일 완료율</div></div><div id="reportChart" class="report-chart"></div></section>
+    <section class="section report-section"><div class="section-head"><div class="section-title">기간 요약</div></div><div id="reportInsight" class="report-insight"></div></section>
   </div>
 </div>
 <button class="fab" id="quickAdd">＋ 기록 추가하기</button>
@@ -86,9 +102,14 @@ const dateLabel=s=>{let d=parse(s);return `${d.getMonth()+1}/${d.getDate()} ${we
 const items=()=>records[selected]||{food:[],task:[]};
 function persist(){localStorage.setItem('daily-note-records',JSON.stringify(records));render()}
 function render(){
- $('#dailyDate').textContent=dateLabel(selected); $('#foodCount').textContent=items().food.length?`${items().food.length}건`:'';
- $('#taskCount').textContent=items().task.length?`${items().task.length}개`:'';
- renderList('food',$('#foodList'));renderList('task',$('#taskList'));renderCalendar();renderSummary();
+ $('#dailyDate').textContent=dateLabel(selected);renderTimeline();renderCalendar();renderSummary();renderReport();
+}
+function renderTimeline(){
+ const all=[...(items().food||[]).map(x=>({...x,type:'food'})),...(items().task||[]).map(x=>({...x,type:'task'}))].sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+ $('#timelineCount').textContent=all.length?all.length+'개 기록':'';
+ if(!all.length){$('#timelineList').innerHTML='<div class="empty">아직 기록이 없어요. 식단이나 할 일을 추가해보세요.</div>';return}
+ $('#timelineList').innerHTML=all.map(x=>'<div class="timeline-entry '+x.type+' '+(x.done?'done':'')+'" data-id="'+x.id+'" data-type="'+x.type+'"><span class="timeline-axis">'+(x.time||'시간 미정')+'</span><i class="timeline-mark"></i><div class="timeline-content">'+(x.type==='task'?'<input class="check" type="checkbox" '+(x.done?'checked':'')+' aria-label="완료">':'')+'<span class="timeline-kind">'+(x.type==='food'?'식단':'할 일')+'</span><span class="entry-text">'+escapeHtml(x.text)+'</span><span class="entry-tools"><button class="mini edit">수정</button><button class="mini delete">삭제</button></span></div></div>').join('');
+ $('#timelineList').querySelectorAll('.timeline-entry').forEach(el=>{const id=el.dataset.id,type=el.dataset.type,edit=el.querySelector('.edit'),del=el.querySelector('.delete'),cb=el.querySelector('.check');if(edit)edit.onclick=()=>openForm(type,id);if(del)del.onclick=()=>{if(confirm('이 기록을 삭제할까요?')){records[selected][type]=records[selected][type].filter(x=>x.id!==id);persist()}};if(cb)cb.onchange=()=>{const x=records[selected].task.find(v=>v.id===id);if(x){x.done=cb.checked;persist()}}});
 }
 function renderList(type,target){
  const arr=items()[type]||[];
@@ -119,12 +140,25 @@ function renderSummary(){
  $('#summaryTasks').innerHTML=r.task.length?r.task.map(x=>`<div class="entry ${x.done?'done':''}"><input class="check" type="checkbox" data-task="${x.id}" ${x.done?'checked':''}><span class="time">${x.time||'--:--'}</span><span class="entry-text">${escapeHtml(x.text)}</span></div>`).join(''):'<div class="empty">등록된 할 일이 없어요.</div>';
  $('#summaryTasks').querySelectorAll('[data-task]').forEach(cb=>cb.onchange=()=>{let x=records[selected].task.find(v=>v.id===cb.dataset.task);x.done=cb.checked;persist()});
 }
-function switchTab(tab){activeTab=tab;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('#dailyView').classList.toggle('hidden',tab!=='daily');$('#calendarView').classList.toggle('hidden',tab!=='calendar');$('#pageTitle').textContent=tab==='daily'?'오늘의 기록':'월간 캘린더';$('#quickAdd').textContent=tab==='daily'?'＋ 기록 추가하기':'＋ 선택한 날짜에 기록하기'}
+function switchTab(tab){activeTab=tab;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('#dailyView').classList.toggle('hidden',tab!=='daily');$('#calendarView').classList.toggle('hidden',tab!=='calendar');$('#reportView').classList.toggle('hidden',tab!=='report');$('#pageTitle').textContent=tab==='daily'?'오늘의 기록':tab==='calendar'?'월간 캘린더':'나의 리포트';$('#quickAdd').classList.toggle('hidden',tab==='report');$('#quickAdd').textContent=tab==='daily'?'＋ 기록 추가하기':'＋ 선택한 날짜에 기록하기';if(tab==='report')renderReport()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('#prevDay').onclick=()=>{let d=parse(selected);d.setDate(d.getDate()-1);selected=iso(d);viewMonth=new Date(d.getFullYear(),d.getMonth(),1);render()};
 $('#nextDay').onclick=()=>{let d=parse(selected);d.setDate(d.getDate()+1);selected=iso(d);viewMonth=new Date(d.getFullYear(),d.getMonth(),1);render()};
 $('#prevMonth').onclick=()=>{viewMonth.setMonth(viewMonth.getMonth()-1);renderCalendar()};
 $('#nextMonth').onclick=()=>{viewMonth.setMonth(viewMonth.getMonth()+1);renderCalendar()};
+let reportPeriod='week';
+document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{reportPeriod=b.dataset.period;document.querySelectorAll('[data-period]').forEach(x=>x.classList.toggle('active',x===b));renderReport()});
+function renderReport(){
+ if(!$('#reportView'))return;const end=parse(iso(now)),start=new Date(end);if(reportPeriod==='week')start.setDate(end.getDate()-6);else start.setDate(1);
+ const keys=[];for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1))keys.push(iso(d));
+ const totals=keys.map(k=>{const r=records[k]||{food:[],task:[]};return {key:k,food:r.food||[],task:r.task||[]}});
+ const allTasks=totals.flatMap(x=>x.task),done=allTasks.filter(x=>x.done).length,foodCount=totals.reduce((n,x)=>n+x.food.length,0),foodDays=totals.filter(x=>x.food.length).length,active=totals.filter(x=>x.food.length||x.task.length).length,rate=allTasks.length?Math.round(done/allTasks.length*100):0;
+ $('#reportRange').textContent=reportPeriod==='week'?(start.getMonth()+1)+'/'+start.getDate()+' - '+(end.getMonth()+1)+'/'+end.getDate():end.getFullYear()+'년 '+(end.getMonth()+1)+'월 1일 - 오늘';
+ $('#completionRate').textContent=rate+'%';$('#taskSummary').textContent='완료 '+done+' / 전체 '+allTasks.length+'개';$('#completionBar').style.width=rate+'%';$('#foodTotal').textContent=foodCount+'회';$('#foodDays').textContent='기록한 날 '+foodDays+'일';$('#doneTotal').textContent=done+'개';$('#activeDays').textContent=active+'일';
+ const chart=reportPeriod==='week'?totals:totals.filter((x,i)=>i%Math.ceil(totals.length/7)===0||i===totals.length-1);$('#chartTitle').textContent=reportPeriod==='week'?'일자별 할 일 완료율':'월간 할 일 완료 추이';
+ $('#reportChart').innerHTML=chart.map(x=>{const n=x.task.length,d=x.task.filter(t=>t.done).length,p=n?Math.round(d/n*100):0;return '<div class="chart-col"><span class="chart-num">'+(n?p+'%':'-')+'</span><div class="chart-track"><i class="chart-bar" style="height:'+p+'%"></i></div><span class="chart-label">'+parse(x.key).getDate()+'일</span></div>'}).join('');
+ const best=totals.reduce((a,x)=>x.task.filter(t=>t.done).length>a.done?{key:x.key,done:x.task.filter(t=>t.done).length}:a,{key:'',done:0});$('#reportInsight').innerHTML='선택한 기간에 식단을 <strong>'+foodCount+'회</strong> 기록했고, 총 <strong>'+allTasks.length+'개</strong>의 할 일 중 <strong>'+done+'개</strong>를 완료했어요. '+(allTasks.length?'완료율은 <strong>'+rate+'%</strong>예요.':'할 일을 기록하면 완료율을 확인할 수 있어요.')+(best.done?' 가장 많은 일을 완료한 날은 <strong>'+dateLabel(best.key)+'</strong>로 '+best.done+'개예요.':'');
+}
 $('#goToday').onclick=()=>{selected=iso(now);viewMonth=new Date(now.getFullYear(),now.getMonth(),1);render();switchTab('daily')};
 function openForm(type='food',id=null){
  kind=type;editing=id;$('#entryText').value='';$('#entryTime').value='12:00';
