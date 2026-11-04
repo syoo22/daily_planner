@@ -51,6 +51,26 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 .report-switch{display:flex;background:#ecece8;padding:4px;border-radius:13px;margin-bottom:12px}.report-period{flex:1;border:0;background:transparent;border-radius:10px;padding:10px;color:#888;font-size:13px}.report-period.active{background:#fff;color:#292925;font-weight:700;box-shadow:0 2px 8px #0000000a}
 .report-range{font-size:12px;color:var(--muted);margin:0 2px 13px}.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.report-card{background:#fff;border-radius:17px;padding:15px;box-shadow:0 3px 16px #22220806;min-width:0}.report-label{font-size:11px;color:#92928a}.report-value{font-size:25px;font-weight:780;letter-spacing:-.8px;margin:7px 0 3px}.report-note{font-size:10px;color:#a0a098}.progress{height:5px;background:#efefeb;border-radius:9px;margin-top:11px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--task);border-radius:9px;transition:width .35s}
 .report-section{margin-top:12px}.report-chart{display:flex;align-items:flex-end;justify-content:space-around;gap:8px;height:142px;padding:10px 2px 0}.chart-col{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.chart-track{height:105px;width:min(25px,75%);background:#f1f2ee;border-radius:8px 8px 4px 4px;display:flex;align-items:flex-end;overflow:hidden}.chart-bar{width:100%;height:0;background:#829786;border-radius:8px 8px 3px 3px;transition:height .35s}.chart-num{font-size:9px;color:#8e8e86}.chart-label{font-size:10px;color:#92928a}.report-insight{font-size:13px;line-height:1.8;color:#66665e}
+.section,.report-card,.calendar{border:1px solid #f0f0eb;box-shadow:0 5px 22px rgba(48,48,35,.035)}
+.section{padding:20px 18px}
+.report-card{padding:17px 16px 16px;border-radius:19px;position:relative;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+.report-card:after{content:"";position:absolute;top:0;left:16px;right:16px;height:2px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,#dce8dc,#f3eadb);opacity:.9}
+.report-label{font-size:11px;letter-spacing:-.1px;color:#8d9189}
+.report-value{font-size:27px;line-height:1.15;color:#303b32;margin:9px 0 5px;font-variant-numeric:tabular-nums}
+.report-note{font-size:10px;line-height:1.5;color:#a0a39b}
+.progress{height:7px;background:#f0f2ed;border-radius:99px;margin-top:13px}
+.progress i{background:linear-gradient(90deg,#b7cbb8,#78947d);border-radius:99px}
+.report-section{padding:20px 18px}
+.report-section .section-head{margin-bottom:10px}
+.report-chart{height:158px;gap:5px;padding:13px 0 0}
+.chart-col{gap:8px}
+.chart-track{height:112px;width:min(28px,76%);background:#f0f3ee;border-radius:99px;overflow:hidden}
+.chart-bar{background:linear-gradient(180deg,#a9c2aa,#718d76);border-radius:99px 99px 5px 5px;min-height:0}
+.chart-num{font-size:10px;font-weight:650;color:#7f9281;font-variant-numeric:tabular-nums}
+.chart-label{font-size:10px;color:#92968e}
+.report-insight strong{color:#526e58;font-weight:750}
+.section-title{letter-spacing:-.35px}
+@media(hover:hover){.report-card:hover{transform:translateY(-2px);box-shadow:0 9px 25px rgba(48,48,35,.065)}}
 .timeline-entry{display:flex;gap:10px;position:relative;padding:12px 0;border-top:1px solid #f2f2ee}.timeline-entry:first-child{border-top:0}.timeline-axis{width:49px;flex:none;font-size:12px;color:#999990;padding-top:2px;font-variant-numeric:tabular-nums}.timeline-mark{position:absolute;left:54px;top:18px;width:7px;height:7px;border-radius:50%;z-index:1}.timeline-content{margin-left:8px;flex:1;min-width:0;display:flex;align-items:flex-start;gap:8px}.timeline-kind{font-size:10px;color:#a0a098;background:#f5f5f1;border-radius:5px;padding:3px 6px;flex:none}.timeline-entry.food .timeline-mark{background:var(--food)}.timeline-entry.task .timeline-mark{background:var(--task)}.timeline-entry.done .entry-text{color:#aaa;text-decoration:line-through}
 @media(min-width:600px){body{padding:20px 0}.app{border-radius:28px;min-height:calc(100dvh - 40px);box-shadow:0 10px 45px #0000000a}}
 </style>
