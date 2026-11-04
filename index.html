@@ -131,20 +131,23 @@ function openForm(type='food',id=null){
  if(id){let x=(records[selected]?.[type]||[]).find(v=>v.id===id);if(x){$('#entryText').value=x.text;$('#entryTime').value=x.time||'12:00'}}
  document.querySelectorAll('[data-kind]').forEach(b=>b.classList.toggle('active',b.dataset.kind===type));
  $('#entryText').placeholder=type==='food'?'무엇을 먹었나요?':'오늘 할 일을 적어보세요.';
- $('#formTitle').textContent=id?'기록 수정':'새 기록 추가';$('#save').textContent=id?'수정 완료':'기록 저장하기';$('#overlay').classList.add('show');setTimeout(()=>$('#entryText').focus(),150);
+ $('#formTitle').textContent=id?'기록 수정':'새 기록 추가';$('#save').textContent=id?'수정 완료':'기록 저장하기';openModal();
 }
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>openForm(b.dataset.add));
 $('#quickAdd').onclick=()=>openForm('food');
 document.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{kind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.classList.toggle('active',x===b));$('#entryText').placeholder=kind==='food'?'무엇을 먹었나요?':'오늘 할 일을 적어보세요.'});
-$('#close').onclick=()=>$('#overlay').classList.remove('show');
-$('#overlay').onclick=e=>{if(e.target===$('#overlay'))$('#overlay').classList.remove('show')};
+let savedScrollY=0;
+function openModal(){savedScrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top=`-${savedScrollY}px`;document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';$('#overlay').classList.add('show');}
+function closeModal(){ $('#overlay').classList.remove('show');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';window.scrollTo(0,savedScrollY);}
+$('#close').onclick=closeModal;
+$('#overlay').onclick=e=>{if(e.target===$('#overlay'))closeModal()};
 $('#save').onclick=()=>{
  let text=$('#entryText').value.trim();if(!text){$('#entryText').focus();return}
  if(!records[selected])records[selected]={food:[],task:[]};
  let arr=records[selected][kind],time=$('#entryTime').value;
  if(editing){let x=arr.find(v=>v.id===editing);if(x){x.text=text;x.time=time}}
  else arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,time,done:false});
- $('#overlay').classList.remove('show');editing=null;persist();
+ closeModal();editing=null;persist();
 };
 render();
 </script>
