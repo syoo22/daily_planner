@@ -86,7 +86,7 @@ h1{font-size:29px;letter-spacing:-1.3px;margin:8px 0 5px;font-weight:750}.sub{fo
 </head>
 <body>
 <div class="app">
-  <div class="top"><div class="brand">MY DAILY NOTE</div><button class="today-link" id="goToday">오늘로 이동</button></div>
+  <div class="top"><div class="brand">MY DAILY NOTE</div></div>
   <h1 id="pageTitle">오늘의 기록</h1><p class="sub">먹은 것과 해야 할 일을 생각날 때마다 편하게 기록해요.</p>
   <div class="tabs"><button class="tab active" data-tab="daily">오늘 기록</button><button class="tab" data-tab="calendar">캘린더</button><button class="tab" data-tab="report">리포트</button><button class="tab" data-tab="nutrition">AI 식단</button></div>
   <div id="dailyView">
@@ -254,7 +254,7 @@ function renderReport(){
  $('#reportChart').innerHTML=chart.map(x=>{const n=x.task.length,d=x.task.filter(t=>t.done).length,p=n?Math.round(d/n*100):0;return '<div class="chart-col"><span class="chart-num">'+(n?p+'%':'-')+'</span><div class="chart-track"><i class="chart-bar" style="height:'+p+'%"></i></div><span class="chart-label">'+parse(x.key).getDate()+'일</span></div>'}).join('');
  const best=totals.reduce((a,x)=>x.task.filter(t=>t.done).length>a.done?{key:x.key,done:x.task.filter(t=>t.done).length}:a,{key:'',done:0});$('#reportInsight').innerHTML='선택한 기간에 식단을 <strong>'+foodCount+'회</strong> 기록했고, 총 <strong>'+allTasks.length+'개</strong>의 할 일 중 <strong>'+done+'개</strong>를 완료했어요. '+(allTasks.length?'완료율은 <strong>'+rate+'%</strong>예요.':'할 일을 기록하면 완료율을 확인할 수 있어요.')+(best.done?' 가장 많은 일을 완료한 날은 <strong>'+dateLabel(best.key)+'</strong>로 '+best.done+'개예요.':'');
 }
-$('#goToday').onclick=()=>{selected=iso(now);viewMonth=new Date(now.getFullYear(),now.getMonth(),1);render();switchTab('daily')};
+
 function openForm(type='food',id=null){
  kind=type;editing=id;$('#entryText').value='';$('#entryTime').value='12:00';
  if(id){let x=(records[selected]?.[type]||[]).find(v=>v.id===id);if(x){$('#entryText').value=x.text;$('#entryTime').value=x.time||'12:00'}}
