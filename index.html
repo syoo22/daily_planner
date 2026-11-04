@@ -128,11 +128,21 @@ let records={}; try{records=JSON.parse(localStorage.getItem('daily-note-records'
 const parse=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const weekdays=['일','월','화','수','목','금','토'];
 const dateLabel=s=>{let d=parse(s);return `${d.getMonth()+1}/${d.getDate()} ${weekdays[d.getDay()]}`};
-const items=()=>records[selected]||{food:[],task:[]};
+const items=()=>records[selected]||{food:[],task:[],habits:[]};
+let habits=[];try{habits=JSON.parse(localStorage.getItem('daily-note-habits')||'[]')}catch(e){habits=[]}
 function persist(){localStorage.setItem('daily-note-records',JSON.stringify(records));render()}
 function render(){
- $('#dailyDate').textContent=dateLabel(selected);renderTimeline();renderCalendar();renderSummary();renderReport();
+ $('#dailyDate').textContent=dateLabel(selected);renderTimeline();renderHabits();renderCalendar();renderSummary();renderReport();
 }
+function renderHabits(){
+ const completed=items().habits||[];
+ $('#habitProgress').textContent=completed.filter(id=>habits.some(h=>h.id===id)).length+'/'+habits.length+' 완료';
+ if(!habits.length){$('#habitList').innerHTML='<div class="habit-empty">매일 반복하고 싶은 습관을 추가해보세요. 예: 물 2L 마시기, 운동하기</div>';return}
+ $('#habitList').innerHTML=habits.map(h=>{const done=completed.includes(h.id);return '<div class="habit-row '+(done?'done':'')+'"><input class="habit-check" type="checkbox" data-habit="'+h.id+'" '+(done?'checked':'')+'><span class="habit-name">'+escapeHtml(h.name)+'</span><button class="mini habit-delete" data-delete-habit="'+h.id+'">삭제</button></div>'}).join('');
+ $('#habitList').querySelectorAll('[data-habit]').forEach(cb=>cb.onchange=()=>{if(!records[selected])records[selected]={food:[],task:[],habits:[]};if(!records[selected].habits)records[selected].habits=[];const id=cb.dataset.habit;records[selected].habits=cb.checked?[...new Set([...records[selected].habits,id])]:records[selected].habits.filter(x=>x!==id);persist()});
+ $('#habitList').querySelectorAll('[data-delete-habit]').forEach(btn=>btn.onclick=()=>{const h=habits.find(x=>x.id===btn.dataset.deleteHabit);if(h&&confirm('"'+h.name+'" 습관을 목록에서 삭제할까요?')){habits=habits.filter(x=>x.id!==h.id);localStorage.setItem('daily-note-habits',JSON.stringify(habits));persist()}});
+}
+$('#addHabit').onclick=()=>{const name=prompt('매일 기록할 습관을 입력해 주세요.');if(!name||!name.trim())return;habits.push({id:'h'+Date.now().toString(36),name:name.trim().slice(0,40)});localStorage.setItem('daily-note-habits',JSON.stringify(habits));renderHabits()};
 function renderTimeline(){
  const all=[...(items().food||[]).map(x=>({...x,type:'food'})),...(items().task||[]).map(x=>({...x,type:'task'}))].sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
  $('#timelineCount').textContent=all.length?all.length+'개 기록':'';
@@ -212,6 +222,20 @@ $('#save').onclick=()=>{
  else arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,time,done:false});
  closeModal();editing=null;persist();
 };
+function exportCsv(){
+ const rows=[['날짜','유형','시간','내용','완료 여부']];
+ Object.keys(records).sort().forEach(date=>{
+  const r=records[date]||{};
+  (r.food||[]).forEach(x=>rows.push([date,'식단',x.time||'',x.text,'']));
+  (r.task||[]).forEach(x=>rows.push([date,'할 일',x.time||'',x.text,x.done?'완료':'미완료']));
+  (r.habits||[]).forEach(id=>{const h=habits.find(v=>v.id===id);if(h)rows.push([date,'습관','',h.name,'완료'])});
+ });
+ habits.forEach(h=>rows.push(['','습관 목록','',h.name,'']));
+ const csv='\\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='my-daily-note-'+iso(new Date())+'.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+$('#exportCsv').onclick=exportCsv;
 render();
 </script>
 </body></html>
